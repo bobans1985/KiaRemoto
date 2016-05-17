@@ -6,11 +6,25 @@
 require_once __DIR__ . '/library/autoload.php';
 
 if(!defined("IN_ADMIN")) die;
-// Начинаем сессию
-session_start();
-$login = "login";
-$passw = "password";
+
+//$login = "login";
+//$passw = "password";
+$login = "1";
+$passw = "1";
+
 // Проверям были ли посланы данные
+/*echo "session:";
+echo $_POST['enter'];
+echo $_SESSION['login'];
+echo $_SESSION['passw'];
+echo $_SESSION['agent'];
+echo $_SESSION['ip'];
+
+echo $_POST['login'];
+echo $_POST['passw'];
+echo $_SERVER['HTTP_USER_AGENT'];
+echo $_SERVER['REMOTE_ADDR'];*/
+
 if(!empty($_POST['enter']))
 {
     $_SESSION['login'] = md5($_POST['login']);
@@ -21,10 +35,12 @@ if(!empty($_POST['enter']))
 
 // Если ввода не было, или они не верны
 // просим их ввести
-if(empty($_SESSION['login']) or
+if ((!empty($_POST['enter'])) and
+    (empty($_SESSION['login']) or
     md5($login) != $_SESSION['login'] or
-    md5($passw) != $_SESSION['passw']
-)  echo('<div class="col-sm-6 col-md-4 col-md-offset-4 text-danger">Неверный логин либо пароль!</div>');
+    md5($passw) != $_SESSION['passw'] )
+) echo('<div class="col-sm-6 col-md-4 col-md-offset-4 text-danger">Неверный логин либо пароль!</div>');
+
 if(empty($_SESSION['login']) or
     md5($login) != $_SESSION['login'] or
     md5($_SERVER['HTTP_USER_AGENT' ]) !=$_SESSION['agent'] or
@@ -58,4 +74,3 @@ if(empty($_SESSION['login']) or
         ');
     die;
     }
-?>

@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,10 +61,11 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors',1);
-require_once __DIR__ . '/library/autoload.php';
+//require_once __DIR__ . '/library/autoload.php';
 
 //Авторизация
-define("IN_ADMIN", TRUE);require "auth.php";
+define("IN_ADMIN", TRUE);
+require "auth.php";
 
 $login = 'phone';
 $password = 'password';
