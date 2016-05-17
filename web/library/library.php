@@ -633,34 +633,40 @@ function destroySession() {
 	        if(function_exists('curl_init')) {
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_URL, $url);
-		        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-		        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-		        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+		    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+		    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 			if ($post) {
 			        curl_setopt($curl, CURLOPT_HEADER, TRUE);
   			        curl_setopt($curl, CURLOPT_POST, $post);
 			        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 			}
-		        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+		    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt($curl, CURLOPT_USERPWD, "$login:$password");
-                	//curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+                //curl_setopt($curl, CURLINFO_HEADER_OUT, true);
 		        //curl_setopt($curl, CURLOPT_COOKIE,'kiatmpfile.tmp');
 		        //curl_setopt($curl, CURLOPT_COOKIEJAR,'kiatmpfile.tmp');
 		        //curl_setopt($curl, CURLOPT_COOKIEFILE,'kiatmpfile.tmp');
 			curl_setopt($curl, CURLOPT_USERAGENT, 'Kia-Remoto/880 CFNetwork/672.1.15 Darwin/14.0.0');
 			curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+
 			$result = curl_exec($curl);
-			//echo($result.'<br>');
+			//echo('>>>>>'.$result.'<br>');
 			$info = curl_getinfo( $curl,CURLINFO_HTTP_CODE);
-			$error =  curl_error ($curl);
-			//print_r(array(curl_getinfo( $curl),$error));
+            if (curl_errno($curl)) {
+                    print curl_error($curl).'<br>';
+            }
+            //print_r(array(curl_getinfo( $curl)),array(curl_error ($curl)) );
 			//echo('<br>End process');
 			curl_close($curl);
-			if ($info=200) {
+			if ( ($result<>null) and ($info=200) ) {
 				//echo('<br>Запрос успешно выполен<br>');
-	   	        	return $result;
-			}
+	   	        return $result;
+			} else {
+                //echo('<br>Запрос не выполен!!!<br>');
+                return $result;
+            }
 		}
 	}
 	}
