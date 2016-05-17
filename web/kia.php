@@ -62,6 +62,9 @@
 //ini_set('display_errors',1);
 require_once __DIR__ . '/library/autoload.php';
 
+//Авторизация
+define("IN_ADMIN", TRUE);require "auth.php";
+
 $login = 'phone';
 $password = 'password';
 
@@ -74,6 +77,7 @@ if ($_GET["step"]=='Run') {
 	$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
 	echo('<details><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 	$res = json_decode($http);
+	if ($res==null) die('Could not connect to remote server!');
 	if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
 	if ( (!$res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}==0) ) {
 		$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
@@ -95,6 +99,7 @@ if ($_GET["step"]=='Stop') {
 	$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
 	echo('<details><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 	$res = json_decode($http);
+	if ($res==null) die('Could not connect to remote server!');
 	if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
 	if ( ($res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}>0) ) {
 		$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
@@ -114,6 +119,7 @@ if ((!isset($_GET["step"])) or ($_GET["step"]=='Status')) {
 	echo("<h4> Status for car:</h4>");
 	$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
 	$res = json_decode($http);
+	if ($res==null) die('Could not connect to remote server!');
 	$engine=$res->{'Engine'}->{'IsOn'};
 	$rpm=$res->{'Engine'}->{'Rpm'};
 	$dateofmessage=Date('d.m.Y H:i:s',substr($res->{'Info'}->{'Date'},6,10));
