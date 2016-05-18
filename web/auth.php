@@ -8,25 +8,28 @@ $WrongPassword = "Введите логин и пароль необходимы
 
 if(!empty($_POST['enter']))
 {
-    $_SESSION['login'] = md5($_POST['login']);
-    $_SESSION['passw'] = md5($_POST['passw']);
+    $_SESSION['login'] = $_POST['login'];
+    $_SESSION['passw'] = $_POST['passw'];
     $_SESSION['agent']=md5($_SERVER['HTTP_USER_AGENT']);
     $_SESSION['ip'] = md5($_SERVER['REMOTE_ADDR']);
+    if (http_request_kia_login($_POST['login'],$_POST['passw'])) $_SESSION['Login']= md5('TRUE');
+
 }
 
 // Если ввода не было, или они не верны
 // просим их ввести
 if ((!empty($_POST['enter'])) and
     (empty($_SESSION['login']) or
-    md5($login) != $_SESSION['login'] or
-    md5($passw) != $_SESSION['passw'] )
+        empty($_SESSION['Login']) or
+        md5('TRUE')!=$_SESSION['Login'] )
 ) $WrongPassword='<p class="text-danger">Неверный логин либо пароль!</p>';
 
 if(empty($_SESSION['login']) or
-    md5($login) != $_SESSION['login'] or
     md5($_SERVER['HTTP_USER_AGENT' ]) !=$_SESSION['agent'] or
-    md5($passw) != $_SESSION['passw'] or
-    md5($_SERVER['REMOTE_ADDR']) != $_SESSION['ip']
+    md5($_SERVER['REMOTE_ADDR']) != $_SESSION['ip'] or
+    empty($_SESSION['Login']) or
+    md5('TRUE')!=$_SESSION['Login']
+    or (!http_request_kia_login($_SESSION['login'],$_SESSION['passw']))
 )
 {
     echo ('

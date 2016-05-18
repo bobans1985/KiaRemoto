@@ -671,6 +671,17 @@ function destroySession() {
 	}
 	}
 
+function http_request_kia_login($login='',$password='') {
+    $result = false;
+    $http = http_request_kia('https://rmt.brightbox.ru/api/v2/users/me','',$login,$password);
+    $res = json_decode($http);
+    //echo prettyPrint($http);
+    if ( ($res!=null) and ($res->{'User'}->{'Phone'}==$login) ) {
+        return TRUE;
+    }
+
+}
+
 function prettyPrint( $json )
 {
     $result = '';

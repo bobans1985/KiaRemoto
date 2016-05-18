@@ -64,8 +64,8 @@
 	//Авторизация
 	define("IN_ADMIN", TRUE);
 	require "auth.php";
-	$login = 'phone';
-	$password = 'password';
+	$login = $_SESSION['login'];
+	$password = $_SESSION['passw'];
 	if (LOGIN<>null) {
 		echo('
 			<div class="navbar navbar-inverse" role = "navigation" >
@@ -88,17 +88,17 @@
 			echo("<p> Run engine car:</p>");
 			$postData=  '{"Info":{"CommandType":100}}';
 			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-			echo('<details><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
+			echo('<details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 			$res = json_decode($http);
 			if ($res==null) die('Could not connect to remote server!');
 			if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
-			if ( (!$res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}==0) ) {
+			if ( ($res->{'Network'}->{'Status'}==0) and (!$res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}==0) ) {
 				$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
-				echo('<details><summary>Log after run engine</summary>' . prettyPrint($http) . '</details>');
+				echo('<details style="width: 200px;"><summary>Log after run engine</summary>' . prettyPrint($http) . '</details>');
 				if (strlen($http)>0) {
 					sleep(10);
 					$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-					echo('<details><summary>Log after run engine / status</summary>' . prettyPrint($http) . '</details>');
+					echo('<details style="width: 200px;"><summary>Log after run engine / status</summary>' . prettyPrint($http) . '</details>');
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
 				}
@@ -110,17 +110,17 @@
     	 if ($_POST["flag"]=='true') {
 			$postData=  '{"Info":{"CommandType":102}}';
 			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-			echo('<details><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
+			echo('<details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 			$res = json_decode($http);
 			if ($res==null) die('Could not connect to remote server!');
 			if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
-			if ( ($res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}>0) ) {
+			if ( ($res->{'Network'}->{'Status'}==0) and ($res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}>0) ) {
 				$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
-				echo('<details><summary>Log of stop engine</summary>' . prettyPrint($http) . '</details>');
+				echo('<details style="width: 200px;"><summary>Log of stop engine</summary>' . prettyPrint($http) . '</details>');
 				if (strlen($http)>0) {
 					sleep(10);
 					$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-					echo('<details><summary>Log after stop engine / status</summary>' . prettyPrint($http) . '</details>');
+					echo('<details style="width: 200px;"><summary>Log after stop engine / status</summary>' . prettyPrint($http) . '</details>');
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
 				}
@@ -131,7 +131,7 @@
 	if ((!isset($_GET["step"])) or ($_GET["step"]=='Status')) {
 		$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
 		$res = json_decode($http);
-		if ($res==null) die('Could not connect to remote server!');
+		//if ($res==null) die('Could not connect to remote server!');
 		echo("<h4> Status for car:</h4>");
 		$engine=$res->{'Engine'}->{'IsOn'};
 		$rpm=$res->{'Engine'}->{'Rpm'};
