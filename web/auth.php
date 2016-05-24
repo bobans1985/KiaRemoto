@@ -50,7 +50,7 @@ if(empty($_SESSION['login']) or
                                 </div>
                                  <div class="form-group">
                                     <input type=hidden name=enter value=yes>
-                                    <button  type="submit" class="btn btn-def btn-block">Login</button>
+                                    <button  type="submit" class="btn btn-primary btn-def btn-block">Login</button>
                                  </div>
                             </form>
                            </div>

@@ -28,9 +28,9 @@
 		.Absolute-Center.is-Responsive {
 			width: 50%;
 			height: 50%;
-			min-width: 400px;
+			min-width: 320px;
 			max-width: 600px;
-			padding: 40px;
+			padding: 10px;
 		}
 	</style>
 	<script>
