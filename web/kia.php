@@ -17,7 +17,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="bootstrap/js/bootbox.min.js "></script>
+    <script src="bootstrap/js/bootbox.min.js"></script>
+
+	<script src="bootstrap/js/jquery.maskedinput.min.js"></script>
 	<style>
 		.Absolute-Center {
 			margin: auto;
@@ -40,6 +42,9 @@
 					window.location.href="kia.php";
 				});
 			});
+		});
+		jQuery(function($){
+			$("#login").mask("+7(999) 999-99-99");
 		});
 	</script>
 </head>

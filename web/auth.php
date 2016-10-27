@@ -8,11 +8,11 @@ $WrongPassword = "Введите логин и пароль необходимы
 
 if(!empty($_POST['enter']))
 {
-    $_SESSION['login'] = $_POST['login'];
+    $_SESSION['login'] =str_replace(array('(',')',' ','-'),'',$_POST['login']); //Выкидываем ненужные символы
     $_SESSION['passw'] = $_POST['passw'];
     $_SESSION['agent']=md5($_SERVER['HTTP_USER_AGENT']);
     $_SESSION['ip'] = md5($_SERVER['REMOTE_ADDR']);
-    if (http_request_kia_login($_POST['login'],$_POST['passw'])) $_SESSION['Login']= md5('TRUE');
+    if (http_request_kia_login( $_SESSION['login'],$_SESSION['passw'])) $_SESSION['Login']= md5('TRUE');
 
 }
 
@@ -42,11 +42,11 @@ if(empty($_SESSION['login']) or
                             <form name="form_auth" method="post" action="" id="loginForm">
                                 <div class="form-group input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input  class="form-control" type="text" name="login" placeholder="username"/>
+                                    <input  class="form-control" type="text" name="login" id="login" placeholder="логин/номер телефона"/>
                                  </div>
                                 <div class="form-group input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                    <input class="form-control" type="password" name="passw" placeholder="password"/>
+                                    <input class="form-control" type="password" name="passw" placeholder="пароль/пин-код"/>
                                 </div>
                                  <div class="form-group">
                                     <input type=hidden name=enter value=yes>
