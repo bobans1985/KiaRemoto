@@ -71,6 +71,7 @@
 	require "auth.php";
 	$login = $_SESSION['login'];
 	$password = $_SESSION['passw'];
+	date_default_timezone_set('Etc/GMT-3'); //Выставляем часовой пояс
 	if (LOGIN<>null) {
 		echo('
 			<div class="navbar navbar-inverse" role = "navigation" >
