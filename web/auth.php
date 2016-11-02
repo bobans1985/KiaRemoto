@@ -4,7 +4,7 @@ if(!defined("IN_ADMIN")) die;
 
 $login = "login";
 $passw = "password";
-$WrongPassword = "Введите логин и пароль необходимы для входа в систему";
+$WrongPassword = "Введите логин и пароль, необходимый для входа в систему";
 
 if(!empty($_POST['enter']))
 {

@@ -3,6 +3,7 @@
 <html>
 <head>
 	<title>Kia Remoto bobans@</title>
+	<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width">
     <!-- Bootstrap -->
@@ -52,6 +53,7 @@
 	<div class="navbar-fixed-bottom row-fluid">
 		<div class="navbar-inner">
 			<div class="container text-right">
+				<div><img src="img/logo.png" alt="" height="8%" width="8%"></div>
 				<small>Kia Remoto bobans@ 2016</small>
 			</div>
 		</div>
@@ -71,7 +73,7 @@
 	require "auth.php";
 	$login = $_SESSION['login'];
 	$password = $_SESSION['passw'];
-	date_default_timezone_set('Etc/GMT-3'); //Выставляем часовой пояс
+	date_default_timezone_set('Etc/GMT-3'); //Выставляем часовой пояс | Пусть будет Москва
 	if (LOGIN<>null) {
 		echo('
 			<div class="navbar navbar-inverse" role = "navigation" >
@@ -143,12 +145,14 @@
 		$rpm=$res->{'Engine'}->{'Rpm'};
 		$dateofmessage=Date('d.m.Y H:i:s',substr($res->{'Info'}->{'Date'},6,10));
 		$message=$res->{'Info'}->{'Message'};
+		$speed=$res->{'Engine'}->{'Speed'};
 
 		if ($res->{'Network'}->{'Status'}==0)
 		{
 			echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
 			echo('Статус двигателя: <code>'.($engine ? 'Заведен' : 'Не работает').'</code>');
 			echo('<br>Обороты:<code>'.$rpm.'</code>');
+			echo('<br>Скорость:<code>'.$speed.'</code>');
 			echo('<br>Сообщение:<code>'.$dateofmessage.' / '.$message.'</code>');
 		//	echo('<br>Дата сообщения:'.$dateofmessage);
 			echo('<br>Последние соединение модуля: '.Date('d.m.Y H:i:s',substr($res->{'Network'}->{'LastSync'},6,10)));
