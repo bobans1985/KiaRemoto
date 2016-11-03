@@ -19,8 +19,10 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="bootstrap/js/bootbox.min.js"></script>
-
 	<script src="bootstrap/js/jquery.maskedinput.min.js"></script>
+	<!-- Yandex maps api -->
+	<script src="https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
 	<style>
 		.Absolute-Center {
 			margin: auto;
@@ -34,6 +36,13 @@
 			min-width: 320px;
 			max-width: 600px;
 			padding: 10px;
+		}
+		.center {
+			padding: 20px; /* Поля вокруг текста */
+			margin:  auto; /* Выравниваем по центру */
+		}
+		.navbar-brand {
+			padding: 15px 15px;
 		}
 	</style>
 	<script>
@@ -76,13 +85,14 @@
 	date_default_timezone_set('Etc/GMT-3'); //Выставляем часовой пояс | Пусть будет Москва
 	if (LOGIN<>null) {
 		echo('
-			<div class="navbar navbar-inverse" role = "navigation" >
+			<div class="navbar navbar-inverse"  role = "navigation" >
       			<div class="container-fluid" >
 					<a id = "SatellitesCount" class="navbar-brand" href = "#" > X</a >
         			<div class="navbar-header" >
         				<a class="navbar-brand" href = "kia.php" > Status</a >
-						<a class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно запустить двигатель?\', function(result) { if (result) { document.getElementById(\'Run\').submit();   } }	); " > Run</a >
-		  				<a class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно заглушить двигатель?\', function(result) { if (result) { document.getElementById(\'Stop\').submit();   } }	); " > Stop</a >
+						<a id = "start_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно запустить двигатель?\', function(result) { if (result) { document.getElementById(\'Run\').submit();   } }	); " > Run</a >
+		  				<a id = "stop_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно заглушить двигатель?\', function(result) { if (result) { document.getElementById(\'Stop\').submit();   } }	); " > Stop</a >
+		  				<a class="navbar-brand" href = "kia.php?step=Maps" >Maps</a >
         			</div >
       			</div >
     		</div >
@@ -109,6 +119,9 @@
 					echo('<details style="width: 200px;"><summary>Log after run engine / status</summary>' . prettyPrint($http) . '</details>');
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
+
+					echo('<script>$( "#start_menu" ).remove();</script>'); //Убираем кнопку запуска
+
 				}
 			} else echo('Двигатель запущен,мы не можем его запустить');
     	} else echo('Неправильный переход на страницу... Переходим на главную <script> window.location.href="kia.php";</script>');
@@ -131,6 +144,9 @@
 					echo('<details style="width: 200px;"><summary>Log after stop engine / status</summary>' . prettyPrint($http) . '</details>');
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
+
+					echo('<script>$( "#stop_menu" ).remove();</script>'); //Убираем кнопку остановки
+
 				}
 			} else echo('Двигатель не запущен,мы не можем его оcтановить');
 	    } else echo('Неправильный переход на страницу... Переходим на главную <script> window.location.href="kia.php";</script>');
@@ -147,6 +163,10 @@
 		$message=$res->{'Info'}->{'Message'};
 		$speed=$res->{'Engine'}->{'Speed'};
 
+		if ($engine) {
+			echo('<script>$( "#start_menu" ).remove();</script>');
+		} else echo('<script>$( "#stop_menu" ).remove();</script>');
+
 		if ($res->{'Network'}->{'Status'}==0)
 		{
 			echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
@@ -154,7 +174,6 @@
 			echo('<br>Обороты:<code>'.$rpm.'</code>');
 			echo('<br>Скорость:<code>'.$speed.'</code>');
 			echo('<br>Сообщение:<code>'.$dateofmessage.' / '.$message.'</code>');
-		//	echo('<br>Дата сообщения:'.$dateofmessage);
 			echo('<br>Последние соединение модуля: '.Date('d.m.Y H:i:s',substr($res->{'Network'}->{'LastSync'},6,10)));
 			echo('<br>Состояние ЦЗ: ' . ($res->{'Doors'}->{'CentralLocking'}? 'Закрыто':'Открыто'));
 		} else {
@@ -163,9 +182,50 @@
 
 		echo('<br><br><details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 	}
-?>
 
+	if ((isset($_GET["step"])) and ($_GET["step"]=='Maps')) {
+		echo('Геолокация вашего автомобиля:<br>');
+		echo('<div id="map" class="center" style="width:90%;height:300px"></div><br>');
+		/*Для начала получим статус*/
+		$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
+		$res = json_decode($http);
+		if ($res->{'Engine'}->{'IsOn'}) {
+			echo('<script>$( "#start_menu" ).remove();</script>');
+		} else echo('<script>$( "#stop_menu" ).remove();</script>');
+
+		if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script>');
+		if ($res->{'Network'}->{'Status'}==0) {
+
+			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices/location', '', $login, $password);
+			$res = json_decode($http);
+			$koord1 = $res->{'Latitude'};
+			$koord2 = $res->{'Longitude'};
+			if (($res == null) OR ($koord1 == null) OR ($koord2 == null)) die('Could not receive data of location from remote server!');
+
+			echo('<script type="text/javascript"> 
+         		   ymaps.ready(init);
+          		   var map;
+
+           		   function init(){     
+                		map = new ymaps.Map ("map", {
+                  							  center: [' . $koord1 . ', ' . $koord2 . '],
+                  							  zoom: 7
+            								});
+           				 var placemark = new ymaps.Placemark([' . $koord1 . ', ' . $koord2 . '], {balloonContent: "Автомобиль тут"}, {preset: "twirl#carIcon"});
+           				 map.geoObjects.add(placemark);
+           				 map.setCenter(placemark.geometry.getCoordinates(),15);
+           				 map.behaviors.enable("scrollZoom");
+          			     map.controls.add(new ymaps.control.ZoomControl());
+            
+         		   }
+       			 </script>');
+		} else  echo('<code> Нет связи с тачкой! </code>');
+
+		echo('<br><details style="width: 200px;"><summary>Log read location</summary>' . prettyPrint($http) . '</details>');
+	}
+
+?>
 		</div>
-	</body>
+</body>
 </html>
 
