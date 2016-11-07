@@ -90,8 +90,8 @@
 					<a id = "SatellitesCount" class="navbar-brand" href = "#" > X</a >
         			<div class="navbar-header" >
         				<a class="navbar-brand" href = "kia.php" > Status</a >
-						<a id = "start_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно запустить двигатель?\', function(result) { if (result) { document.getElementById(\'Run\').submit();   } }	); " > Run</a >
-		  				<a id = "stop_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно заглушить двигатель?\', function(result) { if (result) { document.getElementById(\'Stop\').submit();   } }	); " > Stop</a >
+						<a style="display: none;" id = "start_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно запустить двигатель?\', function(result) { if (result) { document.getElementById(\'Run\').submit();   } }	); " > Run</a >
+		  				<a style="display: none;" id = "stop_menu" class="navbar-brand" href = "javascript:bootbox.confirm(\'Вы уверены, что нужно заглушить двигатель?\', function(result) { if (result) { document.getElementById(\'Stop\').submit();   } }	); " > Stop</a >
 		  				<a class="navbar-brand" href = "kia.php?step=Maps" >Maps</a >
         			</div >
       			</div >
@@ -120,7 +120,7 @@
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
 
-					echo('<script>$( "#start_menu" ).remove();</script>'); //Убираем кнопку запуска
+					echo('<script>$( "#stop_menu" ).css("display", "inline");</script>'); //Убираем кнопку запуска
 
 				}
 			} else echo('Двигатель запущен,мы не можем его запустить');
@@ -145,7 +145,7 @@
 					$res = json_decode($http);
 					echo('Last message from car: '.$res->{'Info'}->{'Message'});
 
-					echo('<script>$( "#stop_menu" ).remove();</script>'); //Убираем кнопку остановки
+					echo('<script>$( "#start_menu" ).css("display", "inline");</script>'); //Убираем кнопку остановки
 
 				}
 			} else echo('Двигатель не запущен,мы не можем его оcтановить');
@@ -164,8 +164,8 @@
 		$speed=$res->{'Engine'}->{'Speed'};
 
 		if ($engine) {
-			echo('<script>$( "#start_menu" ).remove();</script>');
-		} else echo('<script>$( "#stop_menu" ).remove();</script>');
+			echo('<script>$( "#stop_menu" ).css("display", "inline");</script>');
+		} else echo('<script>$( "#start_menu" ).css("display", "inline");</script>');
 
 		if ($res->{'Network'}->{'Status'}==0)
 		{
@@ -189,9 +189,9 @@
 		/*Для начала получим статус*/
 		$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
 		$res = json_decode($http);
-		if ($res->{'Engine'}->{'IsOn'}) {
-			echo('<script>$( "#start_menu" ).remove();</script>');
-		} else echo('<script>$( "#stop_menu" ).remove();</script>');
+        if ($res->{'Engine'}->{'IsOn'}) {
+            echo('<script>$( "#stop_menu" ).css("display", "inline");</script>');
+        } else echo('<script>$( "#start_menu" ).css("display", "inline");</script>');
 
 		if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script>');
 		if ($res->{'Network'}->{'Status'}==0) {
