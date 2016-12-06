@@ -7,7 +7,7 @@ require_once 'autoload.php';
 
     if ( session_id() ) return true;
     session_name('KIAREMOTO'.($prefix ? '_'.$prefix : ''));
-    ini_set('session.cookie_lifetime', 0);
+    ini_set('session.cookie_lifetime', $sessionLifetime);
     if ( ! session_start() ) return false;
 
     $t = time();

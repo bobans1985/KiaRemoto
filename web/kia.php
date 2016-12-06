@@ -224,6 +224,7 @@
 		echo('<br><details style="width: 200px;"><summary>Log read location</summary>' . prettyPrint($http) . '</details>');
 	}
 
+	include_once("library/analytics.php");
 ?>
 		</div>
 </body>
