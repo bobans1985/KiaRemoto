@@ -23,6 +23,9 @@
 	<!-- Yandex maps api -->
 	<script src="https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
+	<meta name="yandex-verification" content="7f61cd17c3561f03" />
+	<meta name='wmail-verification' content='9ed3fa35e4f89ea470ad1bf4ed7366e2' />
+	<meta name="google-site-verification" content="g1TDVw1NeZuNt0n-Jpvn70Qr1w9Hx5JNbHpKkNWgoTc" />
 	<style>
 		.Absolute-Center {
 			margin: auto;
