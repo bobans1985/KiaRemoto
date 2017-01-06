@@ -165,6 +165,8 @@
 		$dateofmessage=Date('d.m.Y H:i:s',substr($res->{'Info'}->{'Date'},6,10));
 		$message=$res->{'Info'}->{'Message'};
 		$speed=$res->{'Engine'}->{'Speed'};
+		$temp_in_car=$res->{'Weather'}->{'InnerTemperature'}-10; //10 это погрешность измерения из-за нагрева чипа
+		$temp_outer=$res->{'Weather'}->{'OuterTemperature'};
 
 		if ($engine) {
 			echo('<script>$( "#stop_menu" ).css("display", "inline");</script>');
@@ -179,6 +181,7 @@
 			echo('<br>Сообщение:<code>'.$dateofmessage.' / '.$message.'</code>');
 			echo('<br>Последние соединение модуля: '.Date('d.m.Y H:i:s',substr($res->{'Network'}->{'LastSync'},6,10)));
 			echo('<br>Состояние ЦЗ: ' . ($res->{'Doors'}->{'CentralLocking'}? 'Закрыто':'Открыто'));
+			echo('<br>Температура: ' .$temp_in_car .' / '.$temp_outer);
 		} else {
 			echo('<code> Нет связи с тачкой! </code>');
 		}
