@@ -66,7 +66,7 @@
 		<div class="navbar-inner">
 			<div class="container text-right">
 				<div><img src="img/logo.png" alt="" height="8%" width="8%"></div>
-				<small>Kia Remoto bobans@ 2016</small>
+				<small>Kia Remoto bobans@ 2017</small>
 			</div>
 		</div>
 	</div>
