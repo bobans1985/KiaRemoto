@@ -36,8 +36,8 @@ if(empty($_SESSION['login']) or
             <div class="container">
                 <div class="row">
                     <div class="Absolute-Center is-Responsive">
-                        <div class="form-group text-center" id = "WrongPassword">'.$WrongPassword.'
-                        </div>
+                    <div class="text-center" id = "WrongPassword">'.$WrongPassword.'</div>
+			        <div class="form-group text-center"><b>Kia remoto</b></div>
                         <div class="col-sm-12 col-md-10 col-md-offset-1">
                             <form name="form_auth" method="post" action="" id="loginForm">
                                 <div class="form-group input-group">

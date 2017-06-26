@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Kia Remoto bobans@</title>
+	<title>Kia Remoto bobans@ - удаленное управление автомобилем при помощи смартфона</title>
 	<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="width=device-width">
+	<meta name="keywords" content="Remoto, Ремото, Starline, kia romoto, myremoto, my-remoto,bobans,bobans@ сигнализация с автозапуском, автосигнализация с автозапуском">
+
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
