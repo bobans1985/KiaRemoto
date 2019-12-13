@@ -5,8 +5,9 @@
 	<title>Kia Remoto bobans@ - удаленное управление автомобилем при помощи смартфона</title>
 	<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="keywords" content="Remoto, Ремото, Starline, kia romoto, myremoto, my-remoto,bobans,bobans@ сигнализация с автозапуском, автосигнализация с автозапуском">
-
+	<meta name="keywords" content="Remoto, Ремото, Starline, сигнализация с автозапуском, автосигнализация с автозапуском,kia remoto, кия ремото, кия автозапуск, kia автозапуск, myRemoto, Личный кабинет,remoto личный кабинет, kia личный кабинет ">
+        <meta name="description" content="Kia remoto bobans@ - личный кабинет системы для управления автомобилем при помощи смарфона. MyRemoto / KiaRemoto" />
+	<meta name="viewport" content="width=device-width">
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -67,7 +68,7 @@
 		<div class="navbar-inner">
 			<div class="container text-right">
 				<div><img src="img/logo.png" alt="" height="8%" width="8%"></div>
-				<small>Kia Remoto bobans@ 2017</small>
+				<a href="about.html"><small>Kia Remoto bobans@ 2019</small></a>
 			</div>
 		</div>
 	</div>
@@ -86,6 +87,7 @@
 	require "auth.php";
 	$login = $_SESSION['login'];
 	$password = $_SESSION['passw'];
+    $accessToken=$_SESSION['accessToken'];
 	date_default_timezone_set('Etc/GMT-3'); //Выставляем часовой пояс | Пусть будет Москва
 	if (LOGIN<>null) {
 		echo('
@@ -108,105 +110,94 @@
 	if ((isset($_GET["step"])) and ($_GET["step"]=='Run')) {
 	    if ($_POST["flag"]=='true') {
 			echo("<p> Run engine car:</p>");
-			$postData=  '{"Info":{"CommandType":100}}';
-			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
+			$postData=  '{"commandType":"StartEngine"}';
+			$http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000/commands',$postData,$accessToken,true);
 			echo('<details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
-			$res = json_decode($http);
+            sleep(3);
+            $http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
+            $res = json_decode($http);
 			if ($res==null) die('Could not connect to remote server!');
-			if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
-			if ( ($res->{'Network'}->{'Status'}==0) and (!$res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}==0) ) {
-				$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
-				echo('<details style="width: 200px;"><summary>Log after run engine</summary>' . prettyPrint($http) . '</details>');
-				if (strlen($http)>0) {
-					sleep(10);
-					$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-					echo('<details style="width: 200px;"><summary>Log after run engine / status</summary>' . prettyPrint($http) . '</details>');
-					$res = json_decode($http);
-					echo('Last message from car: '.$res->{'Info'}->{'Message'});
-
-					echo('<script>$( "#stop_menu" ).css("display", "inline");</script>'); //Убираем кнопку запуска
-
-				}
+			if ($res->{'state'}->{'status'}=='Online') 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'location'}->{'satellitesCount'}.' | " ); </script> ');
+			if ( ($res->{'state'}->{'status'}=='Online') and (!$res->{'sensors'}->{'engineOn'}) and ($res->{'sensors'}->{'engineRpm'}==0) ) {
+                sleep(10);
+				$http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
+                $res = json_decode($http);
+				 echo('<details style="width: 200px;"><summary>Log after run engine</summary>' . prettyPrint($http) . '</details>');
+				 echo('Last message from car: '.$res->{'state'}->{'summary'}->{'message'});
+				 echo('<script>$( "#stop_menu" ).css("display", "inline");</script>'); //Убираем кнопку запуска
 			} else echo('Двигатель запущен,мы не можем его запустить');
     	} else echo('Неправильный переход на страницу... Переходим на главную <script> window.location.href="kia.php";</script>');
 	}
 
 	if ((isset($_GET["step"])) and ($_GET["step"]=='Stop')) {
     	 if ($_POST["flag"]=='true') {
-			$postData=  '{"Info":{"CommandType":102}}';
-			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
+			$postData=  '{"commandType":"StopEngine"}';
+			$http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000/commands',$postData,$accessToken,true);
 			echo('<details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
-			$res = json_decode($http);
+			$http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
+            $res = json_decode($http);
+            echo('<details style="width: 200px;"><summary>Log of stop engine</summary>' . prettyPrint($http) . '</details>');
 			if ($res==null) die('Could not connect to remote server!');
-			if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
-			if ( ($res->{'Network'}->{'Status'}==0) and ($res->{'Engine'}->{'IsOn'}) and ($res->{'Engine'}->{'Rpm'}>0) ) {
-				$http = http_request_kia('https://rmt.brightbox.ru/api/v1/devices/commands',$postData,$login,$password,TRUE);
-				echo('<details style="width: 200px;"><summary>Log of stop engine</summary>' . prettyPrint($http) . '</details>');
-				if (strlen($http)>0) {
-					sleep(10);
-					$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
-					echo('<details style="width: 200px;"><summary>Log after stop engine / status</summary>' . prettyPrint($http) . '</details>');
-					$res = json_decode($http);
-					echo('Last message from car: '.$res->{'Info'}->{'Message'});
-
-					echo('<script>$( "#start_menu" ).css("display", "inline");</script>'); //Убираем кнопку остановки
-
-				}
+			if ($res->{'state'}->{'status'}=='Online') 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'location'}->{'satellitesCount'}.' | " ); </script> ');
+			if ( ($res->{'state'}->{'status'}=='Online') and ($res->{'sensors'}->{'engineOn'}) and ($res->{'sensors'}->{'engineRpm'}>0) ) {
+                sleep(10);
+                $http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
+				echo('<details style="width: 200px;"><summary>Log after stop engine / status</summary>' . prettyPrint($http) . '</details>');
+				$res = json_decode($http);
+				echo('Last message from car: '.$res->{'state'}->{'summary'}->{'message'});
+                echo('<script>$( "#start_menu" ).css("display", "inline");</script>'); //Убираем кнопку остановки
 			} else echo('Двигатель не запущен,мы не можем его оcтановить');
 	    } else echo('Неправильный переход на страницу... Переходим на главную <script> window.location.href="kia.php";</script>');
 	}
 
 	if ((!isset($_GET["step"])) or ($_GET["step"]=='Status')) {
-		$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
+		$http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
 		$res = json_decode($http);
-		//if ($res==null) die('Could not connect to remote server!');
+		if (strpos($http,'Unauthorized request')) destroySession();
 		echo("<h4> Status for car:</h4>");
-		$engine=$res->{'Engine'}->{'IsOn'};
-		$rpm=$res->{'Engine'}->{'Rpm'};
-		$dateofmessage=Date('d.m.Y H:i:s',substr($res->{'Info'}->{'Date'},6,10));
-		$message=$res->{'Info'}->{'Message'};
-		$speed=$res->{'Engine'}->{'Speed'};
-		$temp_in_car=$res->{'Weather'}->{'InnerTemperature'}-10; //10 это погрешность измерения из-за нагрева чипа
-		$temp_outer=$res->{'Weather'}->{'OuterTemperature'};
+		$engine=$res->{'sensors'}->{'engineOn'};
+		$rpm=$res->{'sensors'}->{'engineRpm'};
+		$dateofmessage=$res->{'state'}->{'lastSync'};//Date('d.m.Y H:i:s',substr($res->{'state'}->{'lastSync'},6,10));
+		$message=$res->{'state'}->{'summary'}->{'message'};
+		$speed=$res->{'sensors'}->{'speed'};
+		$temp_in_car=$res->{'sensors'}->{'innerTemperature'}-10; //10 это погрешность измерения из-за нагрева чипа
+		$temp_outer=$res->{'sensors'}->{'outsideTemperature'};
 
 		if ($engine) {
 			echo('<script>$( "#stop_menu" ).css("display", "inline");</script>');
 		} else echo('<script>$( "#start_menu" ).css("display", "inline");</script>');
 
-		if ($res->{'Network'}->{'Status'}==0)
+		if ($res->{'state'}->{'status'}=='Online')
 		{
-			echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script> ');
+			echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'location'}->{'satellitesCount'}.' | " ); </script> ');
 			echo('Статус двигателя: <code>'.($engine ? 'Заведен' : 'Не работает').'</code>');
 			echo('<br>Обороты:<code>'.$rpm.'</code>');
 			echo('<br>Скорость:<code>'.$speed.'</code>');
 			echo('<br>Сообщение:<code>'.$dateofmessage.' / '.$message.'</code>');
-			echo('<br>Последние соединение модуля: '.Date('d.m.Y H:i:s',substr($res->{'Network'}->{'LastSync'},6,10)));
-			echo('<br>Состояние ЦЗ: ' . ($res->{'Doors'}->{'CentralLocking'}? 'Закрыто':'Открыто'));
+			echo('<br>Последние соединение модуля: '.$res->{'state'}->{'lastSync'});
+			echo('<br>Состояние ЦЗ: ' . ($res->{'sensors'}->{'doors'}->{'centralLock'}? 'Закрыто':'Открыто'));
 			echo('<br>Температура: ' .$temp_in_car .' / '.$temp_outer);
 		} else {
 			echo('<code> Нет связи с тачкой! </code>');
 		}
 
-		echo('<br><br><details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
+		echo('<br><details style="width: 200px;"><summary>Log read status</summary>' . prettyPrint($http) . '</details>');
 	}
 
 	if ((isset($_GET["step"])) and ($_GET["step"]=='Maps')) {
 		echo('Геолокация вашего автомобиля:<br>');
 		echo('<div id="map" class="center" style="width:90%;height:300px"></div><br>');
 		/*Для начала получим статус*/
-		$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices','',$login,$password);
+        $http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/telematics/devices/05d2ff35-4241-3335-5757-224300000000','',$accessToken);
 		$res = json_decode($http);
-        if ($res->{'Engine'}->{'IsOn'}) {
+        if ($res->{'sensors'}->{'engineOn'}) {
             echo('<script>$( "#stop_menu" ).css("display", "inline");</script>');
         } else echo('<script>$( "#start_menu" ).css("display", "inline");</script>');
 
-		if ($res->{'Network'}->{'Status'}==0) 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'Network'}->{'SatellitesCount'}.' | " ); </script>');
-		if ($res->{'Network'}->{'Status'}==0) {
-
-			$http = http_request_kia('https://rmt.brightbox.ru/api/v2/devices/location', '', $login, $password);
-			$res = json_decode($http);
-			$koord1 = $res->{'Latitude'};
-			$koord2 = $res->{'Longitude'};
+		if ($res->{'state'}->{'status'}=='Online') 	echo('<script>$( "#SatellitesCount" ).text( "'.$res->{'location'}->{'satellitesCount'}.' | " ); </script>');
+		if ($res->{'state'}->{'status'}=='Online') {
+			$koord1 = $res->{'location'}->{'latitude'};
+			$koord2 = $res->{'location'}->{'longitude'};
 			if (($res == null) OR ($koord1 == null) OR ($koord2 == null)) die('Could not receive data of location from remote server!');
 
 			echo('<script type="text/javascript"> 

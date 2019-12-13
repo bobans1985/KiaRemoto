@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>О системе - Kia Remoto bobans@</title>
+	<link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="Remoto, Ремото, Starline, сигнализация с автозапуском, автосигнализация с автозапуском,kia remoto, кия ремото, кия автозапуск, kia автозапуск, myRemoto, Личный кабинет,remoto личный кабинет, kia личный кабинет ">
+        <meta name="description" content="О системе - Kia remoto bobans@: быстрый личный кабинет для управления автомобилем kia с системой Kia remoto, которой доступен по всему миру." />
+	<meta name="viewport" content="width=device-width">
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/js/bootbox.min.js"></script>
+	<script src="bootstrap/js/jquery.maskedinput.min.js"></script>
+	<!-- Yandex maps api -->
+	<script src="https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+	<meta name="yandex-verification" content="7f61cd17c3561f03" />
+	<meta name='wmail-verification' content='9ed3fa35e4f89ea470ad1bf4ed7366e2' />
+	<meta name="google-site-verification" content="g1TDVw1NeZuNt0n-Jpvn70Qr1w9Hx5JNbHpKkNWgoTc" />
+	<style>
+		.Absolute-Center {
+			margin: auto;
+			position: absolute;
+			top: 0; left: 0; bottom: 0; right: 0;
+		}
+
+		.Absolute-Center.is-Responsive {
+			width: 50%;
+
+			min-width: 320px;
+			max-width: 600px;
+			padding: 5px;
+		}
+		.center {
+			padding: 20px; /* Поля вокруг текста */
+			margin:  auto; /* Выравниваем по центру */
+		}
+		.navbar-brand {
+			padding: 15px 15px;
+		}
+	</style>
+	<script>
+		$(function(){
+			$("#SatellitesCount").click(function(){
+				$.post("kia.php?step=Logout",function(data){
+					window.location.href="kia.php";
+				});
+			});
+		});
+		jQuery(function($){
+			$("#login").mask("+7(999) 999-99-99");
+		});
+	</script>
+</head>
+<body  role="document">
+	<div class="navbar-fixed-bottom row-fluid">
+		<div class="navbar-inner">
+			<div class="container text-right">
+				<div><img src="img/logo.png" alt="" height="8%" width="8%"></div>
+				<a href="about.html"><small>Kia Remoto bobans@ 2019</small></a>
+			</div>
+		</div>
+	</div>
+<div class="container">
+                <div class="row">
+                    <div class="Absolute-Center is-Responsive">
+                        <div class="text-center"><h1>О системе kia Remoto bobans@</h1></div>
+                        <div style="text-align: justify;"><p>Наша система предназначена для упраления оригинальным охранным комплексом kia remoto, которая официально устанавливается на автомобили бренда Kia.
+Мы можем заменить официальное приложение для apple/google смартфонов, которое страдает огромным количеством проблем. Мы сделали адаптивный, простой и интуитивно понятный front-end с ограниченным, но самы востребованным функционалом: запуск и остановка двигателя +  просмотр геолокации автомобиля + полный интеграционный лог
+На данный момент успешно работает уже два года, и за это время не возникло никаких проблем. И самое главное - абсолютно бесплатно для вас.
+Для входа в систему необходимо ввести ваш логин (телефон) и пароль, который вы используете на смарфоне.
+</p>
+</div> 
+                    </div>
+                </div>
+</div>
+</body>
+</html>

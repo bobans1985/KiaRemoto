@@ -2,7 +2,7 @@
 require_once 'autoload.php';
 
     function startSession($isUserActivity=true, $prefix=null) {
-    $sessionLifetime = 900; //15 минут сессия
+    $sessionLifetime = 600; //15 минут сессия
     $idLifetime = 60;
 
     if ( session_id() ) return true;
@@ -42,20 +42,32 @@ function destroySession() {
         session_unset();
         setcookie(session_name(), session_id(), time()-60*60*24);
         session_destroy();
+        header("Refresh:0");
     }
 }
 
-	function http_request_kia($url,$data='',$login='',$password='',$post=false) {
+	function http_request_kia($url,$data='',$accesstoken,$post=false,$put=false) {
 	    $result = FALSE;
-	    if ($post) {
+	    if ($post or $put) {
 		    $header=array('Content-Type: application/json',                                                                                
 			          'Content-Length: ' . strlen($data),
-			          'apikey: NmQ2Y2U2ZTJhY2NlNWVkNTdhYjRmN2RlMmNiYjFkM2RhZGE2NzU5NA==');	
+			          'x-api-version: 5',
+                      'apikey: M2Y3YTkxNjliNjAxODg4YzU4NjQwMjA3ZTk2M2RjMTdjN2ZlNmQ4Nzg=',
+                      'x-api-key: M2Y3YTkxNjliNjAxODg4YzU4NjQwMjA3ZTk2M2RjMTdjN2ZlNmQ4Nzg=',
+                      'platform: ios');
 	    } else 
 	    {
-		    $header=array('Content-Type: application/json',                                                                                
-			          'apikey: NmQ2Y2U2ZTJhY2NlNWVkNTdhYjRmN2RlMmNiYjFkM2RhZGE2NzU5NA==');	
+		    $header=array('Content-Type: application/json',
+                          'x-api-version: 5',
+                          'apikey: M2Y3YTkxNjliNjAxODg4YzU4NjQwMjA3ZTk2M2RjMTdjN2ZlNmQ4Nzg=',
+                          'x-api-key: M2Y3YTkxNjliNjAxODg4YzU4NjQwMjA3ZTk2M2RjMTdjN2ZlNmQ4Nzg=',
+                          'platform: ios'
+                    );
 	    }
+        if(!empty($accesstoken)) {
+            array_push($header,'Authorization: Bearer '.$accesstoken);
+        }
+
 	    if(!empty($url)) {
 	        if(function_exists('curl_init')) {
 			$curl = curl_init();
@@ -64,13 +76,19 @@ function destroySession() {
 		    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
 		    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 			if ($post) {
-			        curl_setopt($curl, CURLOPT_HEADER, TRUE);
-  			        curl_setopt($curl, CURLOPT_POST, $post);
-			        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-			}
+                    curl_setopt($curl, CURLOPT_HEADER, TRUE);
+                    curl_setopt($curl, CURLOPT_POST, $post);
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
+            if ($put) {
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
+
+
+
 		    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($curl, CURLOPT_USERPWD, "$login:$password");
                 //curl_setopt($curl, CURLINFO_HEADER_OUT, true);
 		        //curl_setopt($curl, CURLOPT_COOKIE,'kiatmpfile.tmp');
 		        //curl_setopt($curl, CURLOPT_COOKIEJAR,'kiatmpfile.tmp');
@@ -98,13 +116,15 @@ function destroySession() {
 	}
 	}
 
-function http_request_kia_login($login='',$password='') {
-    $result = false;
-    $http = http_request_kia('https://rmt.brightbox.ru/api/v2/users/me','',$login,$password);
+function http_request_kia_pin($phone='',$pin='',$sessionToken='') {
+    $data='{"phone":"'.$phone.'","pin":"'.$pin.'","sessionToken":"'.$sessionToken.'"}';
+    $http = http_request_kia('https://cvp-api-gateway.bbrmt.com/api/users/pin',$data,'',false,true);
     $res = json_decode($http);
     //echo prettyPrint($http);
-    if ( ($res!=null) and ($res->{'User'}->{'Phone'}==$login) ) {
-        return TRUE;
+    if (strpos( $http,'SessionTokenIncorrect')) return 'Неверный токен';
+    if (strpos( $http,'PinIncorrect')) return 'Неверный пин-код'  ;
+    if ( ($res!=null) and strpos( $http,'accessToken') ) {
+        return $res->{'accessToken'};
     }
 
 }
